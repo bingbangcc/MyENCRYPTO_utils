@@ -1,5 +1,6 @@
 add_subdirectory(aes)
 add_subdirectory(bench_operations)
+add_subdirectory(costco)
 add_subdirectory(euclidean_distance)
 add_subdirectory(float)
 add_subdirectory(innerproduct)

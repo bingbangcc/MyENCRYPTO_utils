@@ -75,14 +75,27 @@ int32_t test_inner_product_circuit(e_role role, const std::string& address, uint
 	 */
 	for (i = 0; i < numbers; i++) {
 
-		x = rand();
-		y = rand();
+		x = rand() % 5;
+		y = rand() % 5;
 
 		v_sum += x * y;
 
 		xvals[i] = x;
 		yvals[i] = y;
 	}
+
+	std::cout << "Current role is "<< (role ? "Client" : "Server") << std::endl;
+	std::cout << "Server value is "<< std::endl;
+	for (i = 0; i < numbers; i++) {
+		std::cout << xvals[i] << "  ";
+	}
+	std::cout << std::endl;
+
+	std::cout << "Client value is "<< std::endl;
+	for (i = 0; i < numbers; i++) {
+		std::cout << yvals[i] << "  ";
+	}
+	std::cout << std::endl;
 
 	s_x_vec = circ->PutSIMDINGate(numbers, xvals.data(), 16, SERVER);
 	s_y_vec = circ->PutSIMDINGate(numbers, yvals.data(), 16, CLIENT);

@@ -22,7 +22,7 @@
 //ABY Party class
 #include "../../abycore/aby/abyparty.h"
 
-#include "common/millionaire_prob.h"
+#include "common/test.h"
 
 int32_t read_test_options(int32_t* argcp, char*** argvp, e_role* role,
 		uint32_t* bitlen, uint32_t* nvals, uint32_t* secparam, std::string* address,
@@ -58,9 +58,6 @@ int32_t read_test_options(int32_t* argcp, char*** argvp, e_role* role,
 		assert(int_port < 1 << (sizeof(uint16_t) * 8));
 		*port = (uint16_t) int_port;
 	}
-
-	//delete options;
-
 	return 1;
 }
 
@@ -78,12 +75,7 @@ int main(int argc, char** argv) {
 
 	seclvl seclvl = get_sec_lvl(secparam);
 
-	//evaluate the millionaires circuit using Yao
-	// test_millionaire_prob_circuit(role, address, port, seclvl, 32,
-	// 		nthreads, mt_alg, S_YAO);
-	//evaluate the millionaires circuit using GMW
-	test_millionaire_prob_circuit(role, address, port, seclvl, 32,
-			nthreads, mt_alg, S_BOOL);
+	test_circuit(role, address, port, seclvl, 32, nthreads, mt_alg, S_ARITH);
 
 	return 0;
 }

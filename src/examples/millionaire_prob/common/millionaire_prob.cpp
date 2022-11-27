@@ -80,7 +80,7 @@ int32_t test_millionaire_prob_circuit(e_role role, const std::string& address, u
 		s_alice_money = circ->PutINGate(alice_money, bitlen, CLIENT);
 		s_bob_money = circ->PutDummyINGate(bitlen);
 	}
-
+	std::cout << alice_money << "  " << bob_money << std::endl;
 	/**
 		Step 7: Call the build method for building the circuit for the
 				problem by passing the shared objects and circuit object.
@@ -101,8 +101,11 @@ int32_t test_millionaire_prob_circuit(e_role role, const std::string& address, u
 		Step 9: Executing the circuit using the ABYParty object evaluate the
 				problem.
 	*/
+	// std::cout << "here"  << std::endl;
+	// party->ExecCircuit(); 这里会进行partys之间的通信以完成协议执行
+	// 之前的步骤都是添加一些门来完成函数的等价，这里才是协议的执行部分
 	party->ExecCircuit();
-
+	
 	/**
 		Step 10:Type casting the value to 32 bit unsigned integer for output.
 	*/

@@ -26,6 +26,7 @@
 #include "../../abycore/aby/abyparty.h"
 #include <cstring>
 
+// static const uint32_t m_vBitLens[] = {1, 8, 16, 32, 64};
 static const uint32_t m_vBitLens[] = {1, 8, 16, 32, 64};
 
 static const aby_ops_t m_tBenchOps[] = {
@@ -76,6 +77,43 @@ static const aby_ops_t m_tBenchOps[] = {
 	{ OP_EQ, S_SPLUT, "eqsplut"},
 	{ OP_SBOX, S_SPLUT, "sboxlut" }
 };
+
+
+// static const aby_ops_t m_tBenchOps[] = {
+// 	// { OP_XOR, S_BOOL, "xorbool" },
+// 	// { OP_AND, S_BOOL, "andbool" },
+// 	// { OP_ADD, S_BOOL, "addsobool" },
+// 	// { OP_ADD, S_BOOL, "adddobool" },
+
+// 	// { OP_ADD, S_BOOL, "adddovecbool" },
+// 	// { OP_MUL, S_BOOL, "mulsobool" },
+// 	{ OP_MUL, S_BOOL, "muldobool" },
+// 	// { OP_MUL, S_BOOL, "mulsovecbool" },
+// 	// { OP_MUL, S_BOOL, "muldovecbool" },
+
+// 	// { OP_CMP, S_BOOL, "cmpsobool" },
+// 	// { OP_CMP, S_BOOL, "cmpdobool" },
+// 	// { OP_EQ, S_BOOL, "eqbool" },
+// 	// { OP_MUX, S_BOOL, "muxbool" },
+// 	// { OP_MUX, S_BOOL, "muxvecbool" },
+// 	// { OP_INV, S_BOOL, "invbool" },
+
+// 	// { OP_XOR, S_YAO, "xoryao" },
+// 	// { OP_AND, S_YAO, "andyao" },
+// 	// { OP_ADD, S_YAO, "addyao" },
+// 	{ OP_MUL, S_YAO, "mulyao" },
+// 	// { OP_CMP, S_YAO, "cmpyao" },
+
+// 	// { OP_ADD, S_ARITH, "addarith" },
+// 	{ OP_MUL, S_ARITH, "mularith" },
+// 	// { OP_Y2B, S_YAO, "y2b" },
+// 	// { OP_B2A, S_BOOL, "b2a" },
+
+// 	// { OP_B2Y, S_BOOL, "b2y" },
+// 	// { OP_A2Y, S_ARITH, "a2y" },
+// };
+
+
 
 int32_t read_test_options(int32_t* argcp, char*** argvp, e_role* role, int32_t* bitlen, uint32_t* secparam,
 		std::string* address, uint16_t* port, int32_t* operation, bool* numbers_only, uint32_t* nops, uint32_t* nruns,
@@ -179,7 +217,7 @@ int32_t bench_operations(aby_ops_t* bench_ops, uint32_t nops, ABYParty* party, u
 			std::cout << std::endl;
 		}
 		else {
-			std::cout << "Setup Time [ms] / Online Time [ms] / Setup Comm [Byte] / Online Comm [Byte] / Non-Linear Ops" << std::endl;
+			std::cout << "Setup Time [ms] / Online Time [ms] / Setup Comm [Byte] / Online Comm [Byte] / Non-Linear Ops / Max-Communicate-Rounds" << std::endl;
 		}
 		std::cout << "-----------------------------------------------" << std::endl;
 	}
@@ -427,9 +465,11 @@ int32_t bench_operations(aby_ops_t* bench_ops, uint32_t nops, ABYParty* party, u
 					shrout->get_clear_value_vec(&cvec, &tmpbitlen, &tmpnvals);
 				}
 
-
+				// 总时间
 				op_time += party->GetTiming(P_ONLINE) + party->GetTiming(P_SETUP);
+				// 在线运行时间
 				o_time += party->GetTiming(P_ONLINE);
+				// 设置阶段时间
 				s_time += party->GetTiming(P_SETUP);
 				o_comm += party->GetSentData(P_ONLINE)+party->GetReceivedData(P_ONLINE);
 				s_comm += party->GetSentData(P_SETUP)+party->GetReceivedData(P_SETUP);
@@ -445,6 +485,17 @@ int32_t bench_operations(aby_ops_t* bench_ops, uint32_t nops, ABYParty* party, u
 						<< sharings[bench_ops[i].sharing]->GetNumNonLinearOperations() << "\t"
 						<< sharings[bench_ops[i].sharing]->GetMaxCommunicationRounds() << std::endl;
 				}
+
+				// if(detailed) {
+				// 	std::cout << bitlen <<"\t"
+				// 		<< party->GetTiming(P_SETUP) << "\t"
+				// 		<< s_time << "\t"
+				// 		<< party->GetTiming(P_ONLINE) << "\t"
+				// 		<< o_time << "\t"
+				// 		<< party->GetTiming(P_SETUP) + party->GetTiming(P_ONLINE) << "\t"
+				// 		<< op_time << "\t" << std::endl;
+				// }
+
 
 				party->Reset();
 
@@ -468,7 +519,12 @@ int32_t bench_operations(aby_ops_t* bench_ops, uint32_t nops, ABYParty* party, u
 			} // nruns
 
 			if(!detailed) {
-				std::cout << op_time/nruns << "\t";
+				// 时间单位是秒
+				// std::cout << op_time/nruns << "\t";
+				// // 输出的是在线运行阶段的时间
+				std::cout << o_time/nruns*1000.0 << "\t";
+				// std::cout << "\t";
+				// std::cout << o_time << "\t" << op_time << "\t";
 			}
 		}
 		if(!detailed)
@@ -543,13 +599,16 @@ bool run_bench(e_role role, const std::string& address, uint16_t port, seclvl se
 
 int main(int argc, char** argv) {
 	e_role role;
-	uint32_t secparam = 128, nvals = 1, nruns = 1;
+	uint32_t secparam = 128, nvals = 1;
+	uint32_t nruns = 1000;
 	uint16_t port = 7766;
 	std::string address = "127.0.0.1";
 	int32_t operation = -1, bitlen = -1;
 	bool numbers_only = false;
-	bool no_verify = false;
+	// bool no_verify = false;
 	bool detailed = false;
+	// bool detailed = true;
+	bool no_verify = true;
 	uint32_t nthreads = 1;
 	e_mt_gen_alg mt_alg = MT_OT;
 

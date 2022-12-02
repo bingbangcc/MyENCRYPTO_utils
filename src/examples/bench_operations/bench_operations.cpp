@@ -600,7 +600,8 @@ bool run_bench(e_role role, const std::string& address, uint16_t port, seclvl se
 int main(int argc, char** argv) {
 	e_role role;
 	uint32_t secparam = 128, nvals = 1;
-	uint32_t nruns = 1000;
+	// 运行多少次取平均值
+	uint32_t nruns = 10;
 	uint16_t port = 7766;
 	std::string address = "127.0.0.1";
 	int32_t operation = -1, bitlen = -1;

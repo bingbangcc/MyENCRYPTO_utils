@@ -66,14 +66,17 @@ int32_t CircuitGen(const std::string& circ_file_name, e_role role, const std::st
 	circ_file.open(circ_file_name);
 	std::string line;
 	std::vector<std::string> tokens;
+	// 从circ_file里读入门的信息保存在gates里
 	while (std::getline(circ_file, line)) {
 		if (boost::starts_with(line, "#")) {
 			continue;
 		}
+		// 将读入的line按空格划分为不同的元素读入到tokens里
 		boost::split(tokens, line, [](char c){return c == ' ';});
 		auto it = tokens.begin();
 		std::string curr_node = *it;
 		//std::cout << curr_node << " ";
+		// 将读入的门写入到gates里
 		gates.push_back(curr_node);
 		it++;
 		for (it; it != tokens.end(); it++){
@@ -88,9 +91,9 @@ int32_t CircuitGen(const std::string& circ_file_name, e_role role, const std::st
 	ABYParty* party = new ABYParty(role, address, port, seclvl, bitlen, nthreads, mt_alg);
 	std::vector<Sharing*>& sharings = party->GetSharings();
 	Circuit* circ = sharings[sharing]->GetCircuitBuildRoutine();
-  ArithmeticCircuit* arith_circ = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-  BooleanCircuit* yao_circ = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
-  BooleanCircuit* bool_circ = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
+	ArithmeticCircuit* arith_circ = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+	BooleanCircuit* yao_circ = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
+	BooleanCircuit* bool_circ = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
 	std::map<std::string, share*> output_shares;
 	std::vector<share*> outputs;
 	for (uint32_t r = 0; r < nrounds; r++) {
@@ -114,24 +117,24 @@ int32_t CircuitGen(const std::string& circ_file_name, e_role role, const std::st
 				} else {
 					output_shares[g] = circ->PutINGate(val, bitlen, CLIENT);
 				}
-      } else if (g_type == "A2Y") {
-	share *input = output_shares[input_gates[0]];
-        output_shares[g] = yao_circ->PutA2YGate(input);
-      } else if (g_type == "A2B") {
-	share *input = output_shares[input_gates[0]];
-        output_shares[g] = circ->PutA2BGate(input, yao_circ);
-      } else if (g_type == "B2Y") {
-	share *input = output_shares[input_gates[0]];
-        output_shares[g] = yao_circ->PutB2YGate(input);
-      } else if (g_type == "B2A") {
-	share *input = output_shares[input_gates[0]];
-        output_shares[g] = arith_circ->PutB2AGate(input);
-      } else if (g_type == "Y2B") {
-	share *input = output_shares[input_gates[0]];
-        output_shares[g] = bool_circ->PutY2BGate(input);
-      } else if (g_type == "Y2A") {
-	share *input = output_shares[input_gates[0]];
-        output_shares[g] = circ->PutY2AGate(input, yao_circ);
+      		} else if (g_type == "A2Y") {
+				share *input = output_shares[input_gates[0]];
+				output_shares[g] = yao_circ->PutA2YGate(input);
+			} else if (g_type == "A2B") {
+				share *input = output_shares[input_gates[0]];
+				output_shares[g] = circ->PutA2BGate(input, yao_circ);
+			} else if (g_type == "B2Y") {
+				share *input = output_shares[input_gates[0]];
+				output_shares[g] = yao_circ->PutB2YGate(input);
+			} else if (g_type == "B2A") {
+				share *input = output_shares[input_gates[0]];
+				output_shares[g] = arith_circ->PutB2AGate(input);
+			} else if (g_type == "Y2B") {
+				share *input = output_shares[input_gates[0]];
+				output_shares[g] = bool_circ->PutY2BGate(input);
+			} else if (g_type == "Y2A") {
+				share *input = output_shares[input_gates[0]];
+				output_shares[g] = circ->PutY2AGate(input, yao_circ);
 			} else if (g_type == "OUTPUT") {
 				share *input = output_shares[input_gates[0]];
 				std::string input_t = input_gates[0].substr(0, input_gates[0].find("_"));
@@ -206,7 +209,7 @@ int main(int argc, char** argv) {
   }
   std::cout << "Sharing: " << share_type << std::endl;
 
-  //evaluate the millionaires circuit using Yao
+  // evaluate the millionaires circuit using Yao
   // test_circuit(role, address, port, seclvl, 32, nvals, ndepth, nrounds, nthreads, mt_alg, S_ARITH);
   CircuitGen(circ_file, role, address, port, nrounds, seclvl, 32, nthreads, mt_alg, sharing);
   //evaluate the millionaires circuit using GMW

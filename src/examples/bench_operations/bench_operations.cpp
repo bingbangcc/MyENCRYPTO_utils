@@ -27,7 +27,8 @@
 #include <cstring>
 
 // static const uint32_t m_vBitLens[] = {1, 8, 16, 32, 64};
-static const uint32_t m_vBitLens[] = {1, 8, 16, 32, 64};
+// static const uint32_t m_vBitLens[] = {1, 8, 16, 32, 64};
+static const uint32_t m_vBitLens[] = {32};
 
 static const aby_ops_t m_tBenchOps[] = {
 	{ OP_XOR, S_BOOL, "xorbool" },
@@ -599,7 +600,7 @@ int main(int argc, char** argv) {
 	e_role role;
 	uint32_t secparam = 128, nvals = 1;
 	// 运行多少次取平均值
-	uint32_t nruns = 10;
+	uint32_t nruns = 1;
 	uint16_t port = 7766;
 	std::string address = "127.0.0.1";
 	int32_t operation = -1, bitlen = -1;

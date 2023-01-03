@@ -265,7 +265,7 @@ void ABYParty::ExecCircuit() {
 	PrintCommunication();
 #endif
 
-#if PRINT_PERFORMANCE_STATS
+#if PRINT_MEMORY_STATS
     PrintMemory();
 #endif
 }
@@ -505,12 +505,14 @@ BOOL ABYParty::ThreadReceiveValues() {
 
 
 void ABYParty::PrintPerformanceStatistics() {
+#if COMPLEX_INFO
 	std::cout << "Complexities: " << std::endl;
 	m_vSharings[S_BOOL]->PrintPerformanceStatistics();
 	m_vSharings[S_YAO]->PrintPerformanceStatistics();
 	m_vSharings[S_YAO_REV]->PrintPerformanceStatistics();
 	m_vSharings[S_ARITH]->PrintPerformanceStatistics();
 	m_vSharings[S_SPLUT]->PrintPerformanceStatistics();
+#endif
 	std::cout << "Total number of gates: " << m_pCircuit->GetGateHead() << " Total depth: " << m_pCircuit->GetTotalDepth() << std::endl;
 	PrintTimings();
 	std::cout << std::endl;

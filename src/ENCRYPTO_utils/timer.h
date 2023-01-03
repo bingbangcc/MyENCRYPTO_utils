@@ -92,6 +92,8 @@ void PrintTimings();
 
 void PrintCommunication();
 
+void PrintMemory();
+
 inline double GetTimeForPhase(PHASE phase) {
 	return m_tTimes[phase].timing;
 }

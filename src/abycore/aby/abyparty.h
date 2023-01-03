@@ -56,13 +56,13 @@ public:
 
 	void Reset();
 
-	double GetTiming(ABYPHASE phase);
-	uint64_t GetSentData(ABYPHASE phase);
-	uint64_t GetReceivedData(ABYPHASE phase);
+	double GetTiming(PHASE phase);
+	uint64_t GetSentData(PHASE phase);
+	uint64_t GetReceivedData(PHASE phase);
 	uint32_t GetTotalGates();
 	uint32_t GetTotalDepth();
 
-    uint64_t GetMemory(ABYPHASE phase);
+    uint64_t GetMemory(PHASE phase);
 
 private:
 	BOOL Init();

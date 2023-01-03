@@ -625,20 +625,20 @@ void ABYParty::Reset() {
 	m_pCircuit->Reset();
 }
 
-double ABYParty::GetTiming(ABYPHASE phase) {
+double ABYParty::GetTiming(PHASE phase) {
 	return GetTimeForPhase(phase);
 }
 
-uint64_t ABYParty::GetMemory(ABYPHASE phase) {
+uint64_t ABYParty::GetMemory(PHASE phase) {
     return GetMemoryForPhase(phase);
 }
 
 
-uint64_t ABYParty::GetSentData(ABYPHASE phase) {
+uint64_t ABYParty::GetSentData(PHASE phase) {
 	return GetSentDataForPhase(phase);
 }
 
-uint64_t ABYParty::GetReceivedData(ABYPHASE phase) {
+uint64_t ABYParty::GetReceivedData(PHASE phase) {
 	return GetReceivedDataForPhase(phase);
 }
 

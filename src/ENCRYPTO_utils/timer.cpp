@@ -22,7 +22,7 @@ double getMillies(timespec timestart, timespec timeend) {
 }
 
 uint64_t getBytes(uint64_t memstart, uint64_t memeend) {
-    return (uint64_t) (memstart - memeend);
+    return (uint64_t) (memeend - memstart);
 }
 
 

@@ -62,6 +62,8 @@ public:
 	uint32_t GetTotalGates();
 	uint32_t GetTotalDepth();
 
+    uint64_t GetMemory(ABYPHASE phase);
+
 private:
 	BOOL Init();
 	void Cleanup();

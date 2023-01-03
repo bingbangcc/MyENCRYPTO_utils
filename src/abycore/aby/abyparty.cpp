@@ -264,6 +264,10 @@ void ABYParty::ExecCircuit() {
 #if PRINT_COMMUNICATION_STATS
 	PrintCommunication();
 #endif
+
+#if PRINT_PERFORMANCE_STATS
+    PrintMemory();
+#endif
 }
 
 
@@ -622,6 +626,11 @@ void ABYParty::Reset() {
 double ABYParty::GetTiming(ABYPHASE phase) {
 	return GetTimeForPhase(phase);
 }
+
+uint64_t ABYParty::GetMemory(ABYPHASE phase) {
+    return GetMemoryForPhase(phase);
+}
+
 
 uint64_t ABYParty::GetSentData(ABYPHASE phase) {
 	return GetSentDataForPhase(phase);

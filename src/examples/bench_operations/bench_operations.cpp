@@ -496,9 +496,7 @@ int32_t bench_operations(aby_ops_t* bench_ops, uint32_t nops, ABYParty* party, u
 				// 		<< op_time << "\t" << std::endl;
 				// }
 
-
 				party->Reset();
-
 
 				if(!no_verify) {
 					//std::cout << "Running verification" << std::endl;

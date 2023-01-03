@@ -1,22 +1,3 @@
-/**
- \file 		timer.cpp
- \author 	michael.zohner@ec-spride.de
- \copyright	ABY - A Framework for Efficient Mixed-protocol Secure Two-party Computation
-			Copyright (C) 2019 ENCRYPTO Group, TU Darmstadt
-			This program is free software: you can redistribute it and/or modify
-            it under the terms of the GNU Lesser General Public License as published
-            by the Free Software Foundation, either version 3 of the License, or
-            (at your option) any later version.
-            ABY is distributed in the hope that it will be useful,
-            but WITHOUT ANY WARRANTY; without even the implied warranty of
-            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-            GNU Lesser General Public License for more details.
-            You should have received a copy of the GNU Lesser General Public License
-            along with this program. If not, see <http://www.gnu.org/licenses/>.
- \brief		timer Implementation
- */
-
-#include <sys/time.h>
 #include <string>
 #include <iostream>
 #include <cstdlib>
@@ -28,9 +9,10 @@
 #include "typedefs.h"
 
 
-aby_timings m_tTimes[P_LAST - P_FIRST + 1];
-aby_comm m_tSend[P_LAST - P_FIRST + 1];
-aby_comm m_tRecv[P_LAST - P_FIRST + 1];
+proto_timings m_tTimes[P_LAST - P_FIRST + 1];
+proto_mem m_tMem[P_LAST - P_FIRST + 1];
+proto_comm m_tSend[P_LAST - P_FIRST + 1];
+proto_comm m_tRecv[P_LAST - P_FIRST + 1];
 
 double getMillies(timespec timestart, timespec timeend) {
 	long time1 = (timestart.tv_sec * 1000000) + (timestart.tv_nsec / 1000);
@@ -39,13 +21,24 @@ double getMillies(timespec timestart, timespec timeend) {
 	return (double) (time2 - time1) / 1000;
 }
 
-void StartWatch(const std::string& msg, ABYPHASE phase) {
+uint64_t getBytes(uint64_t memstart, uint64_t memeend) {
+    return (uint64_t) (memstart - memeend);
+}
+
+
+void StartWatch(const std::string& msg, PHASE phase) {
 	if (phase < P_FIRST || phase > P_LAST) {
 		std::cerr << "Phase not recognized: " << phase << std::endl;
 		return;
 	}
 
+    // get begin time
 	clock_gettime(CLOCK_MONOTONIC, &(m_tTimes[phase].tbegin));
+
+    // get current memory
+    get_memory_usage(mem_type::CURRENT_MEM, &(m_tMem[phase].mbegin));
+
+
 #ifndef BATCH
 	std::cout << msg << std::endl;
 #else
@@ -54,14 +47,20 @@ void StartWatch(const std::string& msg, ABYPHASE phase) {
 }
 
 
-void StopWatch(const std::string& msg, ABYPHASE phase) {
+void StopWatch(const std::string& msg, PHASE phase) {
 	if (phase < P_FIRST || phase > P_LAST) {
 		std::cerr << "Phase not recognized: " << phase << std::endl;
 		return;
 	}
 
+    // get end time
 	clock_gettime(CLOCK_MONOTONIC, &(m_tTimes[phase].tend));
 	m_tTimes[phase].timing = getMillies(m_tTimes[phase].tbegin, m_tTimes[phase].tend);
+
+    // get peek memory
+    get_memory_usage(mem_type::PEEK_MEM, &(m_tMem[phase].mend));
+    m_tMem[phase].peekmem = getBytes(m_tMem[phase].mbegin, m_tMem[phase].mend);
+
 
 #ifndef BATCH
 	std::cout << msg << m_tTimes[phase].timing << " ms " << std::endl;
@@ -70,7 +69,7 @@ void StopWatch(const std::string& msg, ABYPHASE phase) {
 #endif
 }
 
-void StartRecording(const std::string& msg, ABYPHASE phase,
+void StartRecording(const std::string& msg, PHASE phase,
 		const std::vector<std::unique_ptr<CSocket>>& sock) {
 	StartWatch(msg, phase);
 
@@ -82,7 +81,7 @@ void StartRecording(const std::string& msg, ABYPHASE phase,
 	}
 }
 
-void StopRecording(const std::string& msg, ABYPHASE phase,
+void StopRecording(const std::string& msg, PHASE phase,
 		const std::vector<std::unique_ptr<CSocket>>& sock) {
 	StopWatch(msg, phase);
 
@@ -121,4 +120,17 @@ void PrintCommunication() {
 	std::cout << "OTExtension Sent / Rcv\t" << m_tSend[P_OT_EXT].totalcomm << " " << unit << " / " << m_tRecv[P_OT_EXT].totalcomm << unit << std::endl;
 	std::cout << "Garbling Sent / Rcv\t" << m_tSend[P_GARBLE].totalcomm << " " << unit << " / " << m_tRecv[P_GARBLE].totalcomm << unit << std::endl;
 	std::cout << "Online Sent / Rcv\t" << m_tSend[P_ONLINE].totalcomm << " " << unit << " / " << m_tRecv[P_ONLINE].totalcomm << unit << std::endl;
+}
+
+void PrintMemory() {
+    std::string unit = " KB";
+    std::cout << "Memory: " << std::endl;
+    // std::cout << "Total =\t\t" << m_tMem[P_TOTAL].peekmem << unit << std::endl;
+    // std::cout << "Init =\t\t" << m_tMem[P_INIT].peekmem << unit << std::endl;
+    std::cout << "Setup Begin=\t\t" << m_tMem[P_SETUP].mbegin << unit << std::endl;
+	std::cout << "Setup End=\t\t" << m_tMem[P_SETUP].mend << unit << std::endl;
+	std::cout << "Setup Difference=\t\t" << m_tMem[P_SETUP].peekmem << unit << std::endl;
+    std::cout << "Online Begin=\t" << m_tMem[P_ONLINE].mbegin << unit << std::endl;
+	std::cout << "Online End=\t" << m_tMem[P_ONLINE].mend << unit << std::endl;
+	std::cout << "Online Difference=\t" << m_tMem[P_ONLINE].peekmem << unit << std::endl;
 }

@@ -23,6 +23,7 @@
 #include <cstdint>
 #include <cmake_constants.h>
 
+
 #define BATCH
 //#define FIXED_KEY_AES_HASHING
 //#define USE_PIPELINED_AES_NI

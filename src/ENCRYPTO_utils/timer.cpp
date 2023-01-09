@@ -58,8 +58,9 @@ void StopWatch(const std::string& msg, PHASE phase) {
 	m_tTimes[phase].timing = getMillies(m_tTimes[phase].tbegin, m_tTimes[phase].tend);
 
     // get peek memory
-    get_memory_usage(mem_type::PEEK_MEM, &(m_tMem[phase].mend));
-    m_tMem[phase].peekmem = getBytes(m_tMem[phase].mbegin, m_tMem[phase].mend);
+    get_memory_usage(mem_type::PEEK_MEM, &(m_tMem[phase].mpeek));
+	// get_memory_usage(mem_type::CURRENT_MEM, &(m_tMem[phase].mend));
+    m_tMem[phase].addmem = getBytes(m_tMem[phase].mbegin, m_tMem[phase].mpeek);
 
 
 #ifndef BATCH
@@ -99,38 +100,54 @@ void StopRecording(const std::string& msg, PHASE phase,
 
 void PrintTimings() {
 	std::string unit = " ms";
+	std::cout << std::endl;
 	std::cout << "Timings: " << std::endl;
-	std::cout << "Total =\t\t" << m_tTimes[P_TOTAL].timing << unit << std::endl;
+	
 	std::cout << "Init =\t\t" << m_tTimes[P_INIT].timing << unit << std::endl;
 	std::cout << "CircuitGen =\t" << m_tTimes[P_CIRCUIT].timing << unit << std::endl;
 	std::cout << "Network =\t" << m_tTimes[P_NETWORK].timing << unit << std::endl;
 	std::cout << "BaseOTs =\t" << m_tTimes[P_BASE_OT].timing << unit << std::endl;
-	std::cout << "Setup =\t\t" << m_tTimes[P_SETUP].timing << unit << std::endl;
 	std::cout << "OTExtension =\t" << m_tTimes[P_OT_EXT].timing << unit << std::endl;
 	std::cout << "Garbling =\t" << m_tTimes[P_GARBLE].timing << unit << std::endl;
+	std::cout << "Setup =\t\t" << m_tTimes[P_SETUP].timing << unit << std::endl;
 	std::cout << "Online =\t" << m_tTimes[P_ONLINE].timing << unit << std::endl;
+	std::cout << "Total =\t\t" << m_tTimes[P_TOTAL].timing << unit << std::endl;
 }
 
 void PrintCommunication() {
 	std::string unit = " bytes";
 	std::cout << "Communication: " << std::endl;
-	std::cout << "Total Sent / Rcv\t" << m_tSend[P_TOTAL].totalcomm << " " << unit << " / " << m_tRecv[P_TOTAL].totalcomm << unit << std::endl;
+	
+	std::cout << "Init Sent / Rcv\t\t" << m_tSend[P_INIT].totalcomm << " " << unit << " / " << m_tRecv[P_INIT].totalcomm << unit << std::endl;
+	std::cout << "CircuitGen Sent / Rcv\t" << m_tSend[P_CIRCUIT].totalcomm << " " << unit << " / " << m_tRecv[P_CIRCUIT].totalcomm << unit << std::endl;
+	std::cout << "Network Sent / Rcv\t" << m_tSend[P_NETWORK].totalcomm << " " << unit << " / " << m_tRecv[P_NETWORK].totalcomm << unit << std::endl;
 	std::cout << "BaseOTs Sent / Rcv\t" << m_tSend[P_BASE_OT].totalcomm << " " << unit << " / " << m_tRecv[P_BASE_OT].totalcomm << unit << std::endl;
-	std::cout << "Setup Sent / Rcv\t" << m_tSend[P_SETUP].totalcomm << " " << unit << " / " << m_tRecv[P_SETUP].totalcomm << unit << std::endl;
 	std::cout << "OTExtension Sent / Rcv\t" << m_tSend[P_OT_EXT].totalcomm << " " << unit << " / " << m_tRecv[P_OT_EXT].totalcomm << unit << std::endl;
 	std::cout << "Garbling Sent / Rcv\t" << m_tSend[P_GARBLE].totalcomm << " " << unit << " / " << m_tRecv[P_GARBLE].totalcomm << unit << std::endl;
+	std::cout << "Setup Sent / Rcv\t" << m_tSend[P_SETUP].totalcomm << " " << unit << " / " << m_tRecv[P_SETUP].totalcomm << unit << std::endl;
 	std::cout << "Online Sent / Rcv\t" << m_tSend[P_ONLINE].totalcomm << " " << unit << " / " << m_tRecv[P_ONLINE].totalcomm << unit << std::endl;
+	std::cout << "Total Sent / Rcv\t" << m_tSend[P_TOTAL].totalcomm << " " << unit << " / " << m_tRecv[P_TOTAL].totalcomm << unit << std::endl;
 }
 
 void PrintMemory() {
     std::string unit = " KB";
+	std::cout << std::endl;
     std::cout << "Memory: " << std::endl;
-    // std::cout << "Total =\t\t" << m_tMem[P_TOTAL].peekmem << unit << std::endl;
-    // std::cout << "Init =\t\t" << m_tMem[P_INIT].peekmem << unit << std::endl;
-    std::cout << "Setup Begin=\t\t" << m_tMem[P_SETUP].mbegin << unit << std::endl;
-	std::cout << "Setup End=\t\t" << m_tMem[P_SETUP].mend << unit << std::endl;
-	std::cout << "Setup Difference=\t\t" << m_tMem[P_SETUP].peekmem << unit << std::endl;
-    std::cout << "Online Begin=\t" << m_tMem[P_ONLINE].mbegin << unit << std::endl;
-	std::cout << "Online End=\t" << m_tMem[P_ONLINE].mend << unit << std::endl;
-	std::cout << "Online Difference=\t" << m_tMem[P_ONLINE].peekmem << unit << std::endl;
+
+	std::cout << "Init Begin / Peek\t" << m_tMem[P_INIT].mbegin << unit << " / " << m_tMem[P_INIT].mpeek << unit << std::endl;
+	std::cout << "CircuitGen Begin / Peek\t" << m_tMem[P_CIRCUIT].mbegin << unit << " / " << m_tMem[P_CIRCUIT].mpeek << unit << std::endl;
+	std::cout << "Network Begin / Peek\t" << m_tMem[P_NETWORK].mbegin << unit << " / " << m_tMem[P_NETWORK].mpeek << unit << std::endl;
+	std::cout << "BaseOTs Begin / Peek\t" << m_tMem[P_BASE_OT].mbegin << unit << " / " << m_tMem[P_BASE_OT].mpeek << unit << std::endl;
+	std::cout << "OTExtension Begin / Peek\t" << m_tMem[P_OT_EXT].mbegin << unit << " / " << m_tMem[P_OT_EXT].mpeek << unit << std::endl;
+	std::cout << "Garbling Begin / Peek\t" << m_tMem[P_GARBLE].mbegin << unit << " / " << m_tMem[P_GARBLE].mpeek << unit << std::endl;
+	std::cout << "Setup Begin / Peek\t" << m_tMem[P_SETUP].mbegin << unit << " / " << m_tMem[P_SETUP].mpeek << unit << std::endl;
+	std::cout << "Online Begin / Peek\t" << m_tMem[P_ONLINE].mbegin << unit << " / " << m_tMem[P_ONLINE].mpeek << unit << std::endl;
+	std::cout << "Total Begin / Peek\t" << m_tMem[P_TOTAL].mbegin << unit << " / " << m_tMem[P_TOTAL].mpeek << unit << std::endl;
+	std::cout << std::endl;
+    // std::cout << "Setup Begin=\t" << m_tMem[P_SETUP].mbegin << unit << std::endl;
+	// std::cout << "Setup End=\t" << m_tMem[P_SETUP].mpeek << unit << std::endl;
+	// std::cout << "Setup Difference=\t\t" << m_tMem[P_SETUP].peekmem << unit << std::endl;
+    // std::cout << "Online Begin=\t" << m_tMem[P_ONLINE].mbegin << unit << std::endl;
+	// std::cout << "Online End=\t" << m_tMem[P_ONLINE].mpeek << unit << std::endl;
+	// std::cout << "Online Difference=\t" << m_tMem[P_ONLINE].peekmem << unit << std::endl;
 }

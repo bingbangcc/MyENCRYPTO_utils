@@ -32,9 +32,9 @@ struct proto_comm {
 
 // Structure for counting memory
 struct proto_mem {
-    uint64_t peekmem;
+    uint64_t addmem;
     uint64_t mbegin;
-    uint64_t mend;
+    uint64_t mpeek;
 };
 
 extern proto_timings m_tTimes[P_LAST - P_FIRST + 1];
@@ -107,12 +107,16 @@ inline uint64_t GetReceivedDataForPhase(PHASE phase) {
 }
 
 inline uint64_t GetMemoryForPhase(PHASE phase) {
-    return m_tMem[phase].peekmem;
+    return m_tMem[phase].mpeek;
 }
 
 // the info line num in /proc/{pid}/status file
-#define VMRSS_LINE 22
-#define VMHWM_LINE 21
+// #define VMRSS_LINE 22
+// #define VMHWM_LINE 21
+
+#define VMRSS_LINE 18
+#define VMHWM_LINE 17
+
 
 enum mem_type{ CURRENT_MEM, PEEK_MEM };
 

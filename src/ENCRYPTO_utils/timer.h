@@ -111,16 +111,16 @@ inline uint64_t GetMemoryForPhase(PHASE phase) {
 }
 
 // the info line num in /proc/{pid}/status file
-// #define VMRSS_LINE 22
-// #define VMHWM_LINE 21
+#define VMRSS_LINE 22
+#define VMHWM_LINE 21
 
-#define VMRSS_LINE 18
-#define VMHWM_LINE 17
+// #define VMRSS_LINE 18
+// #define VMHWM_LINE 17
 
 
 enum mem_type{ CURRENT_MEM, PEEK_MEM };
 
-// get specific process physical memeory occupation size by pid (MB)
+// get specific process physical memeory occupation size by pid (KB)
 inline void get_memory_usage(mem_type memType, uint64_t* result)
 {
     int pid = getpid();

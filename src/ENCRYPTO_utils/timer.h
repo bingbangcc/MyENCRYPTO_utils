@@ -106,8 +106,15 @@ inline uint64_t GetReceivedDataForPhase(PHASE phase) {
 	return m_tRecv[phase].totalcomm;
 }
 
+
+// enum PHASE {
+// 	P_TOTAL, P_INIT, P_CIRCUIT, P_NETWORK, P_BASE_OT, P_SETUP, P_OT_EXT, P_GARBLE, P_ONLINE, P_FIRST = P_TOTAL, P_LAST = P_ONLINE
+// };
 inline uint64_t GetMemoryForPhase(PHASE phase) {
-    return m_tMem[phase].mpeek;
+    // return m_tMem[phase].mpeek;
+ 
+    return m_tMem[P_TOTAL].addmem;
+    // return m_tMem[phase].addmem;
 }
 
 // the info line num in /proc/{pid}/status file

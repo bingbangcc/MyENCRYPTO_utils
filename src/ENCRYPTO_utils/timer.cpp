@@ -22,6 +22,7 @@ double getMillies(timespec timestart, timespec timeend) {
 }
 
 uint64_t getBytes(uint64_t memstart, uint64_t memeend) {
+	// std::cout << "begin " << memstart << " end " << memeend << std::endl;
     return (uint64_t) (memeend - memstart);
 }
 
@@ -59,7 +60,7 @@ void StopWatch(const std::string& msg, PHASE phase) {
 
     // get peek memory
     get_memory_usage(mem_type::PEEK_MEM, &(m_tMem[phase].mpeek));
-	// get_memory_usage(mem_type::CURRENT_MEM, &(m_tMem[phase].mend));
+	// get_memory_usage(mem_type::CURRENT_MEM, &(m_tMem[phase].mpeek));
     m_tMem[phase].addmem = getBytes(m_tMem[phase].mbegin, m_tMem[phase].mpeek);
 
 
@@ -112,7 +113,17 @@ void PrintTimings() {
 	// std::cout << "Setup =\t\t" << m_tTimes[P_SETUP].timing << unit << std::endl;
 	// std::cout << "Online =\t" << m_tTimes[P_ONLINE].timing << unit << std::endl;
 	// std::cout << "Total =\t\t" << m_tTimes[P_TOTAL].timing << unit << std::endl;
-	std::cout << m_tTimes[P_ONLINE].timing << std::endl;
+	// std::cout << m_tTimes[P_ONLINE].timing << std::endl;
+
+	std::cout << "Time: Setup " << m_tTimes[P_SETUP].timing << " Oneline " << 
+	m_tTimes[P_ONLINE].timing << " Total " << m_tTimes[P_TOTAL].timing << std::endl;
+
+
+	std::cout << "CommSend: Setup " << m_tSend[P_SETUP].totalcomm << " Oneline " << 
+	m_tSend[P_ONLINE].totalcomm << " Total " << m_tSend[P_TOTAL].totalcomm << std::endl;
+
+	std::cout << "CommRecv: Setup " << m_tRecv[P_SETUP].totalcomm << " Oneline " << 
+	m_tRecv[P_ONLINE].totalcomm << " Total " << m_tRecv[P_TOTAL].totalcomm << std::endl;
 }
 
 void PrintCommunication() {
